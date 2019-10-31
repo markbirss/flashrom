@@ -139,7 +139,7 @@ const char **flashrom_supported_programmers(void)
  */
 struct flashrom_flashchip_info *flashrom_supported_flash_chips(void)
 {
-	int i = 0;
+	unsigned int i = 0;
 	struct flashrom_flashchip_info *supported_flashchips =
 		malloc(flashchips_size * sizeof(*supported_flashchips));
 
@@ -170,6 +170,7 @@ struct flashrom_flashchip_info *flashrom_supported_flash_chips(void)
  */
 struct flashrom_board_info *flashrom_supported_boards(void)
 {
+#if CONFIG_INTERNAL == 1
 	int boards_known_size = 0;
 	int i = 0;
 	const struct board_info *binfo = boards_known;
@@ -194,6 +195,9 @@ struct flashrom_board_info *flashrom_supported_boards(void)
 	}
 
 	return supported_boards;
+#else
+	return NULL;
+#endif
 }
 
 /**
@@ -202,6 +206,7 @@ struct flashrom_board_info *flashrom_supported_boards(void)
  */
 struct flashrom_chipset_info *flashrom_supported_chipsets(void)
 {
+#if CONFIG_INTERNAL == 1
 	int chipset_enables_size = 0;
 	int i = 0;
 	const struct penable *chipset = chipset_enables;
@@ -228,6 +233,9 @@ struct flashrom_chipset_info *flashrom_supported_chipsets(void)
 	}
 
 	return supported_chipsets;
+#else
+	return NULL;
+#endif
 }
 
 /**

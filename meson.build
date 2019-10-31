@@ -1,6 +1,6 @@
 project('flashromutils', 'c',
   version : '1.0',
-  license : 'GPL-2.0+',
+  license : 'GPL-2.0',
   meson_version : '>=0.47.0',
   default_options : ['warning_level=2', 'c_std=c99'],
 )
@@ -11,13 +11,12 @@ lt_revision = '0'
 lt_age = '0'
 lt_version = '@0@.@1@.@2@'.format(lt_current, lt_age, lt_revision)
 
-# hide some warnings
+# hide/enable some warnings
 warning_flags = [
+  '-Wwrite-strings',
   '-Wno-unused-parameter',
-  '-Wno-sign-compare',
   '-Wno-address-of-packed-member',
   '-Wno-enum-conversion',
-  '-Wno-missing-field-initializers',
   '-Wno-missing-braces',
 ]
 
@@ -320,6 +319,7 @@ srcs += 'programmer.c'
 srcs += 'sfdp.c'
 srcs += 'spi25.c'
 srcs += 'spi25_statusreg.c'
+srcs += 'spi95.c'
 srcs += 'spi.c'
 srcs += 'sst28sf040.c'
 srcs += 'sst49lfxxxc.c'
@@ -349,13 +349,22 @@ flashrom = shared_library(
   link_depends : mapfile,
 )
 
+version = meson.project_version()
+#strip leading characters
+if version.startswith('v')
+  version = version.split('v')[1]
+endif
+if version.startswith('p')
+  version = version.split('p')[1]
+endif
+
 pkgg = import('pkgconfig')
 pkgg.generate(
   libraries : flashrom,
-  version : meson.project_version(),
-  name : 'libflashrom',
-  filebase : 'libflashrom',
-  description : 'libflashrom',
+  version : version,
+  name : 'flashrom',
+  filebase : 'flashrom',
+  description : 'library to interact with flashrom',
 )
 
 flashrom_dep = declare_dependency(
